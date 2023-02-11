@@ -25,7 +25,7 @@ for (i in 1:length(column_names)) {
 
 # Cabe aclarar que en el Dataset Details los tipos de las variables están 
 # descritos respectivamente como: string, string, string, boolean, year(int),
-# year(int), minutes(int), string. " 
+# year(int), minutes(int), string. 
 
 cat("\n\n")
 
