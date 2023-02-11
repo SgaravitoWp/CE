@@ -14,7 +14,7 @@ df_basics = read_tsv("https://datasets.imdbws.com/title.basics.tsv.gz",
 
 cat("Nuestro conjunto de datos posee", ncol(df_basics), "variables. \n")
 
-# Finalmente, procedemos a imprimir  el tipo de cada variable: "
+# Finalmente, procedemos a imprimir  el tipo de cada variable: 
 
 column_names = colnames(df_basics)
 column_types = sapply(df_basics, class)
@@ -42,7 +42,7 @@ df_principals = read_tsv("https://datasets.imdbws.com/title.principals.tsv.gz",
 
 cat("Nuestro conjunto de datos posee", ncol(df_principals), "variables. \n")
 
-# Finalmente, procedemos a imprimir  el tipo de cada variable: "
+# Finalmente, procedemos a imprimir  el tipo de cada variable: 
 
 column_names = colnames(df_principals)
 column_types = sapply(df_principals, class)
@@ -66,7 +66,7 @@ df_names = read_tsv("https://datasets.imdbws.com/name.basics.tsv.gz",
 
 cat("Nuestro conjunto de datos posee", ncol(df_names), "variables. \n")
 
-# Finalmente, procedemos a imprimir  el tipo de cada variable: "
+# Finalmente, procedemos a imprimir  el tipo de cada variable: 
 
 column_names = colnames(df_names)
 column_types = sapply(df_names, class)
