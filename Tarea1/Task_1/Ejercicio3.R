@@ -1,5 +1,5 @@
 library(readr)
-
+ 
 cat("Inicia el proceso de lectura de los datos ... \n\n")
 
 # Inicialmente, en este apartado instanciamos los vectores correspondientes a los nombres y
