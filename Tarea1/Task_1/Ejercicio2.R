@@ -30,7 +30,7 @@ for (i in 1:length(column_names)) {
 }
 
 # Primera anotación: En el Dataset Details los tipos de las variables están 
-# descritos respectivamente como: string, string, string, boolean, year(int),
+# descritos respectivamente como: string, string, string, string, boolean, year(int),
 # year(int), minutes(int), array of strings. 
 
 cat("\n\n")
