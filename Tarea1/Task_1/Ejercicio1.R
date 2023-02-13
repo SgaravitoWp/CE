@@ -1,31 +1,4 @@
 
-
-#CHICOS, ME FALTA COMENTARLE Y EXPLICAR UNAS COSAS, PERO NO SE SI ESTA FORMA SEA LA CORRECTA, O SI DEBO AGREGARLE 
-#ALGO PARA QUE TAMBIEN ME DIGA EL TOTAL DE DATOS QUE HAY.
-#TAMBIEN ESTABA PENSANDO EN COMO HACER PARA REDUCIR MUCHAS LINEAS.
-
-
-#░░░░░░░░░░░░░░░░░░░░░░█████████
-#░░███████░░░░░░░░░░███▒▒▒▒▒▒▒▒███
-#░░█▒▒▒▒▒▒█░░░░░░░███▒▒▒▒▒▒▒▒▒▒▒▒▒███
-#░░░█▒▒▒▒▒▒█░░░░██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██
-#░░░░█▒▒▒▒▒█░░░██▒▒▒▒▒██▒▒▒▒▒▒██▒▒▒▒▒███
-#░░░░░█▒▒▒█░░░█▒▒▒▒▒▒████▒▒▒▒████▒▒▒▒▒▒██
-#░░░█████████████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██
-#░░░█▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒▒▒██
-#░██▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒██▒▒▒▒▒▒▒▒▒▒██▒▒▒▒██
-#██▒▒▒███████████▒▒▒▒▒██▒▒▒▒▒▒▒▒██▒▒▒▒▒██
-#█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒████████▒▒▒▒▒▒▒██
-#██▒▒▒▒▒▒▒▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██
-#░█▒▒▒███████████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒██
-#░██▒▒▒▒▒▒▒▒▒▒████▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒█
-#░░████████████░░░█████████████████
-
-
-
-
-
-
 #Lo primero es identificar la extencion de los archivos que trabajaremos.
 #Al percatarnos que son .xlsx, usaremos la libreria:
 
@@ -45,6 +18,8 @@ library(readxl)
 #TAV = Tarjetas amarillas del equipo visitante
 #TRL = Tarjetas rojas del equipo local
 #TRV = Tarjetas rojas del equipo visitante
+
+
 
 #     season-1415.xlsx_______________________________________________________________________________ 
 
@@ -137,8 +112,9 @@ season1819 <- read_excel("season-1819.xlsx", sheet = 1, skip = 1,
 column_names14 = colnames(season1415)
 column_types14 = sapply(season1415, class)
 
-for (i in 1:length(column_names)) {
-  cat("La variable: ", column_names[[i]], ", es de tipo: ", column_types[[i]] ,  ".\n")
+#Realizamos un ciclo que recorra cada columna, imprimiendo el nombre de la variable y el tipo de dato que tiene
+for (i in 1:length(column_names14)) {
+  cat("La variable: ", column_names14[[i]], ", es de tipo: ", column_types14[[i]] ,  ".\n")
 }
 cat("Obteniendo asi un total de:",i," variables registradas.")
 
@@ -148,8 +124,9 @@ cat("Obteniendo asi un total de:",i," variables registradas.")
 column_names15 = colnames(season1516)
 column_types15 = sapply(season1516, class)
 
-for (i in 1:length(column_names)) {
-  cat("La variable: ", column_names[[i]], ", es de tipo: ", column_types[[i]] ,  ".\n")
+#Realizamos un ciclo que recorra cada columna, imprimiendo el nombre de la variable y el tipo de dato que tiene
+for (i in 1:length(column_names15)) {
+  cat("La variable: ", column_names15[[i]], ", es de tipo: ", column_types15[[i]] ,  ".\n")
 }
 cat("Obteniendo asi un total de:",i," variables registradas.")
 
@@ -160,8 +137,9 @@ cat("Obteniendo asi un total de:",i," variables registradas.")
 column_names16 = colnames(season1617)
 column_types16 = sapply(season1617, class)
 
-for (i in 1:length(column_names)) {
-  cat("La variable: ", column_names[[i]], ", es de tipo: ", column_types[[i]] ,  ".\n")
+#Realizamos un ciclo que recorra cada columna, imprimiendo el nombre de la variable y el tipo de dato que tiene
+for (i in 1:length(column_names16)) {
+  cat("La variable: ", column_names16[[i]], ", es de tipo: ", column_types16[[i]] ,  ".\n")
 }
 cat("Obteniendo asi un total de:",i," variables registradas.")
 
@@ -172,8 +150,9 @@ cat("Obteniendo asi un total de:",i," variables registradas.")
 column_names17 = colnames(season1718)
 column_types17 = sapply(season1718, class)
 
-for (i in 1:length(column_names)) {
-  cat("La variable: ", column_names[[i]], ", es de tipo: ", column_types[[i]] ,  ".\n")
+#Realizamos un ciclo que recorra cada columna, imprimiendo el nombre de la variable y el tipo de dato que tiene
+for (i in 1:length(column_names17)) {
+  cat("La variable: ", column_names17[[i]], ", es de tipo: ", column_types17[[i]] ,  ".\n")
 }
 cat("Obteniendo asi un total de:",i," variables registradas.")
 
@@ -184,8 +163,9 @@ cat("Obteniendo asi un total de:",i," variables registradas.")
 column_names18 = colnames(season1819)
 column_types18 = sapply(season1819, class)
 
-for (i in 1:length(column_names)) {
-  cat("La variable: ", column_names[[i]], ", es de tipo: ", column_types[[i]] ,  ".\n")
+#Realizamos un ciclo que recorra cada columna, imprimiendo el nombre de la variable y el tipo de dato que tiene
+for (i in 1:length(column_names18)) {
+  cat("La variable: ", column_names18[[i]], ", es de tipo: ", column_types18[[i]] ,  ".\n")
 }
 cat("Obteniendo asi un total de:",i," variables registradas.")
   
