@@ -168,4 +168,5 @@ for (i in 1:length(column_names18)) {
   cat("La variable: ", column_names18[[i]], ", es de tipo: ", column_types18[[i]] ,  ".\n")
 }
 cat("Obteniendo asi un total de:",i," variables registradas.")
-  
+
+cat("Asi culmina el ejercicio 1")
