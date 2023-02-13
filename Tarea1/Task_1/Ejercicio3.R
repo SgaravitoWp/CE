@@ -1,5 +1,14 @@
+#Lo primero es identificar la extencion de los archivos que trabajaremos.
+#Al percatarnos que son .csv, usaremos la libreria:
+
 library(readr)
- 
+
+# Cabe aclarar que de ante mano, es preciso setear nuestro directorio de 
+# trabajo, por ende dejamos la siguiente línea comentada para realizar esta 
+# acción. 
+
+# setwd("Directorio de Trabajo")
+
 cat("Inicia el proceso de lectura de los datos ... \n\n")
 
 # Inicialmente, en este apartado instanciamos los vectores correspondientes a los nombres y
