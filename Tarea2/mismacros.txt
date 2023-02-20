@@ -1,0 +1,119 @@
+mytable <- function(formula,data,subset,cum=TRUE,ord=c("levels","-levels","freq","-freq"),na.action,
+                    percent=TRUE,rowperc=TRUE,colperc=TRUE,digits=2){
+			 ord <- match.arg(ord)
+			 if (missingArg(data)) data <- environment(formula)
+			 x <- match.call(expand.dots = FALSE)
+	         m <- match(c("formula","data","subset","na.action"),names(x),0L)
+	         x <- x[c(1L,m)]
+	         x[[1L]] <- quote(stats::model.frame)
+	         x <- eval(x,parent.frame())
+			 if(length(formula) < 3) x <- cbind(1,x)
+			 if(ncol(x)==2){
+				 x <- as.data.frame(x)
+				 salida <- colnames(x)
+				 colnames(x) <- c("weight","cat")
+				 options(dplyr.summarise.inform = FALSE)
+				 a <- x %>% filter(!is.na(weight)) %>% group_by(cat) %>% summarise(count=sum(weight)) %>%
+				      as.data.frame()
+				 if(ord=="levels") ids <- order(a[,1]); if(ord=="-levels") ids <- order(a[,1],decreasing=TRUE)
+				 if(ord=="freq") ids <- order(a[,2],decreasing=TRUE); if(ord=="-freq") ids <- order(a[,2])
+				 b <- data.frame(a[ids,]);c <- b
+				 if(any(is.na(b[,1]))){ c[-nrow(b),] <- b[!is.na(b[,1]),]; c[ nrow(b),] <- b[ is.na(b[,1]),]}
+				 d <- cbind(c[,2],100*c[,2]/sum(c[,2]),cumsum(c[,2]),100*cumsum(c[,2])/sum(c[,2]))
+				 colnames(d) <- c("Frequency","Percent(%)","Cumulative Frequency","Cumulative Percent(%)")
+				 d <- rbind(d[1,],d,d[1,])
+	 			 rownames(d) <- c(" ",as.character(c[,1])," ")
+				 d[c(1,nrow(d)),] <- NA
+				 rownames(d) <- ifelse(is.na(rownames(d)),"NA",rownames(d))
+				 rownames(d) <- paste(rownames(d),apply(as.matrix(max(nchar(rownames(d))) - nchar(rownames(d))),1,function(x) paste(rep(" ",x),collapse="")),"|")
+				 cat("\ntable  : ",salida[2])
+				 cat("\nweights:",ifelse(salida[1]=="rep(1, nrow(x))"," 1",salida[1]))
+				 cat("\n")
+				 if(cum){
+				   if(percent) printCoefmat(d,tst.ind=c(2,4),dig.tst=digits,cs.ind=c(1,3),na.print="----------------------")
+				   else printCoefmat(d[,-2],tst.ind=c(3),dig.tst=digits,cs.ind=c(1,2),na.print="----------------------")
+				 }  
+				 else{
+				   if(percent) printCoefmat(d[,c(1,2)],tst.ind=c(2),dig.tst=digits,cs.ind=c(1),na.print="----------------------")
+				   else{
+				     dd <- as.matrix(d[,1])
+					 colnames(dd) <- "Frequency"
+				     printCoefmat(dd,dig.tst=digits,na.print="----------------------")
+				   }	 
+				 }  
+				 d <- d[!is.na(d[,1]),]
+				 rownames(d) <- gsub("|","",rownames(d),fixed=TRUE)
+				 return(invisible(as.data.frame(d)))
+			 }else{
+				 x <- as.data.frame(x[,1:3])
+				 salida <- colnames(x)
+				 colnames(x) <- c("weight","cat1","cat2")
+				 options(dplyr.summarise.inform = FALSE)
+				 pre1 <- x %>% group_by(cat1) %>% summarise(count=sum(weight)) %>% arrange(desc(count)) %>%
+				           select(cat1) %>% as.data.frame()
+				 pre1$id1 <- 1:nrow(pre1);pre1$vc <- 1		   
+				 pre2 <- x %>% group_by(cat2) %>% summarise(count=sum(weight)) %>% arrange(desc(count)) %>%
+				           select(cat2) %>% as.data.frame()
+				 pre2$id2 <- 1:nrow(pre2);pre2$vc <- 1		   
+				 nano <- x %>% group_by(cat1,cat2) %>% summarise(count=sum(weight)) %>% as.data.frame()
+				 todos <- inner_join(pre1,pre2,by=c("vc"="vc"))
+				 nano <-  nano %>% right_join(todos,by=c("cat1"="cat1","cat2"="cat2")) %>%
+				          mutate(count=ifelse(is.na(count),0,count)) %>% select(everything(nano)) %>% as.data.frame()
+				 if(ord=="-levels") nano <- nano %>% arrange(desc(cat2)) %>% as.data.frame()
+				 if(ord=="freq") nano <- nano %>% inner_join(pre2,by=c("cat2"="cat2")) %>% arrange(id2) %>%
+				                         select(everything(nano)) %>% as.data.frame()
+				 if(ord=="-freq") nano <- nano %>% inner_join(pre2,by=c("cat2"="cat2")) %>% arrange(desc(id2)) %>%
+				                         select(everything(nano)) %>% as.data.frame()
+				 nano2 <- reshape(nano, v.names = "count", idvar = "cat1",
+	                      timevar = "cat2", direction = "wide")
+				 nano2[,1] <- as.character(nano2[,1])
+				 a <- cbind(nm=1,nm2=nano2[,1],nano2[,-1])				 
+				 b <- cbind(nm=2,nm2=nano2[,1],100*nano2[,-1]/sum(nano2[-1]))
+				 c <- cbind(nm=3,nm2=nano2[,1],100*nano2[,-1]/apply(nano2[-1],1,sum))
+				 d <- cbind(nm=4,nm2=nano2[,1],100*nano2[,-1]/matrix(apply(nano2[-1],2,sum),nrow(nano2[,-1]),ncol(nano2[,-1]),byrow=TRUE))
+				 e <- cbind(nm=5,nm2=nano2[,1],nano2[,-1])
+				 f <- rbind(a,b,c,d,e)
+				 h <- f %>% mutate(nm2=rep("_Total_",nrow(f))) %>% group_by(nm2,nm) %>% summarise_all(list(sum)) %>%
+				           filter(nm != 0) %>% as.data.frame()
+				 f <- f %>% arrange(nm2,nm) %>% as.data.frame()
+				 f <- rbind(f,h)
+				 if(ord=="-levels") f <- f %>% arrange(desc(nm2),nm) %>% as.data.frame()
+				 if(ord=="freq") f <- f %>% left_join(pre1,by=c("nm2"="cat1")) %>% arrange(id1) %>%
+				                      select(everything(f)) %>% as.data.frame()
+				 if(ord=="-freq") f <- f %>% left_join(pre1,by=c("nm2"="cat1")) %>% arrange(desc(id1)) %>%
+				                       select(everything(f)) %>%	as.data.frame()
+				 f <- rbind(e2 <- cbind(nm=0,nm2=nano2[1,1],nano2[1,-1]),f)
+				 f <- cbind(f,apply(f[,-c(1,2)],1,sum))
+				 colnames(f)[ncol(f)] <- "_Total_"
+				 f[,"_Total_"] <- ifelse(f[,"nm"]==3 | f[,"nm"]==4,NA,f[,"_Total_"])
+				 g <- as.matrix(f[,-c(1,2)])
+				 g[f[,1]==5 | f[,1]==0,] <- NA
+				 g[(f[,1]==3 | f[,1]==4) & f[,2]=="_Total_",] <- NA
+				 rownames(g) <- ifelse(f[,1]==1,f[,2]," ")
+				 if(!percent){ g <- g[f[,1]!=2,]; f <- f[f[,1]!=2,]}
+				 if(!rowperc){ g <- g[f[,1]!=3,]; f <- f[f[,1]!=3,]}
+				 if(!colperc){ g <- g[f[,1]!=4,]; f <- f[f[,1]!=4,]}
+				 g <- g[-nrow(g),]
+				 ajust <- apply(as.matrix(max(nchar(rownames(g))) - nchar(rownames(g))),1,function(x) paste(c(rep(" ",x),"|"),collapse=""))
+				 rownames(g) <- paste(rownames(g),ajust)
+				 colnames(g) <- gsub("count.","",colnames(g))
+				 cat("\nrows   :",salida[2])
+				 cat("\ncolumns:",salida[3])
+				 cat("\nweights:",ifelse(salida[1]=="rep(1, nrow(x))","1",salida[1]))
+				 cat("\n\n ----------- ")
+				 cat("\n|Frequency  |")
+				 if(percent) cat("\n|Percent    |")
+				 if(rowperc) cat("\n|Row Percent|")
+				 if(colperc) cat("\n|Col Percent|")
+				 cat("\n ----------- ")
+				 cat("\n\n")
+				 printCoefmat(g,tst.ind=c(1:ncol(g)),dig.tst=digits,na.print=paste(rep("-",max(nchar(colnames(g)))),collapse=""))
+				 f <- f[f$nm != 0 & f$nm != 5 & f$nm2 != "_Total_",-c(1,ncol(f))]
+				 colnames(f) <- gsub("count.","",colnames(f))
+				 colnames(f)[1] <- salida[2]
+				 row.names(f) <- NULL
+				 return(invisible(as.data.frame(f)))
+			 }
+}
+
+nano <- mytable(~Month,data=airquality,cum=FALSE,percent=FALSE)
