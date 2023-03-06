@@ -71,6 +71,8 @@ tablaTemporadaDplyr = function(temporada) {
 }
 
 ##SQL
+startTimeSql = Sys.time()
+
 tabla1415 = tablaTemporada('season1415')
 head(tabla1415)
 
@@ -86,7 +88,16 @@ head(tabla1718)
 tabla1819 = tablaTemporada('season1819')
 head(tabla1819)
 
+endTimeSql = Sys.time()
+timeSql = endTimeSql - startTimeSql
+
+timeSql
+
+
 ##DPLYR
+
+startTimeDplyr = Sys.time()
+
 tabla1415dplyr = tablaTemporadaDplyr(season1415)
 head(tabla1415dplyr)
 
@@ -101,3 +112,52 @@ head(tabla1718dplyr)
 
 tabla1819dplyr = tablaTemporadaDplyr(season1819)
 head(tabla1819dplyr)
+
+endTimeDplyr = Sys.time()
+timeDplyr = endTimeDplyr - startTimeDplyr
+timeDplyr
+
+## Cuales equipos se mantuvieron en las primeras 4 posiciones de la clasificación final?
+topn = function(n) {
+top = sqldf(paste("SELECT Team, Pos FROM tabla1415 WHERE Pos <=", n,
+             "UNION ALL SELECT Team, Pos FROM tabla1516 WHERE Pos <=", n,
+             "UNION ALL SELECT Team, Pos FROM tabla1617 WHERE Pos <=", n,
+             "UNION ALL SELECT Team, Pos FROM tabla1718 WHERE Pos <=", n,
+             "UNION ALL SELECT Team, Pos FROM tabla1819 WHERE Pos <=", n
+             ))
+top = sqldf("SELECT Team, COUNT(*) as VecesEnElTop
+             FROM top
+             GROUP BY Team
+             ORDER BY VecesEnElTop DESC")
+
+return (top)
+}
+
+#Estas tablas nos muestran todos los equipos que estuvieron en el top n en las 5 temporadas y las veces que estuvieron en el top.
+#Para este ejercicio solo nos interesan aquellos que estuvieron 5 veces en el top en las 5 temporadas.
+top4 = topn(4)
+top4
+
+top5 = topn(5)
+top5
+
+top6 = topn(6)
+top6
+
+#De manera similar, esta función crea una tabla con los equipos que estuvieron abajo en la puntuación
+bottomn = function(n) {
+bottom = sqldf(paste("SELECT Team, Pos FROM tabla1415 WHERE Pos >", 20-n,
+             "UNION ALL SELECT Team, Pos FROM tabla1516 WHERE Pos >", 20-n,
+             "UNION ALL SELECT Team, Pos FROM tabla1617 WHERE Pos >", 20-n,
+             "UNION ALL SELECT Team, Pos FROM tabla1718 WHERE Pos >", 20-n,
+             "UNION ALL SELECT Team, Pos FROM tabla1819 WHERE Pos >", 20-n
+             ))
+bottom = sqldf("SELECT Team, COUNT(*) as VecesQueDescendieron
+             FROM bottom
+             GROUP BY Team
+             ORDER BY VecesQueDescendieron DESC")
+return(bottom)
+}
+
+bottom3 = bottomn(3)
+bottom3
